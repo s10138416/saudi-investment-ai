@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import get_settings
+
 from app.api.routes import router
+from app.core.config import get_settings
 
 settings = get_settings()
 app = FastAPI(
     title=settings.app_name,
-    version="0.1.0",
+    version="0.2.0",
     description="Saudi market investment analysis backend",
 )
 
@@ -25,7 +26,8 @@ app.include_router(router, prefix=settings.api_v1_prefix)
 async def root() -> dict:
     return {
         "name": settings.app_name,
-        "version": "0.1.0",
+        "version": "0.2.0",
+        "phase": "phase-1-sahmk-integration",
         "docs": "/docs",
         "health": f"{settings.api_v1_prefix}/health",
     }

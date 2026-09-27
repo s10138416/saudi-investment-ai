@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 class DataConfidence(BaseModel):
     score: float = Field(ge=0, le=100)
-    missing_fields: list[str] = []
-    warnings: list[str] = []
+    missing_fields: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
 
 
 class InvestmentSnapshot(BaseModel):
