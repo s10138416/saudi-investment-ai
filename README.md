@@ -1,67 +1,81 @@
-# Saudi Investment AI v0.1.0
+# Saudi Investment AI — Phase 1
 
-Starter architecture for a Saudi-market investment decision engine.
+Investment decision-support platform for Saudi listed stocks.
 
-## Stack
-- Frontend: Flutter / Dart
-- Backend: Python 3.12 + FastAPI
-- Database: PostgreSQL
-- Market data: SAHMK Pro (server-side only)
-- Realtime-ready: WebSocket architecture
+## Architecture
 
-## What this version includes
-- FastAPI backend skeleton
-- Health endpoint
-- SAHMK client service with secure env-based API key handling
-- Placeholder endpoints for stock profile and unified analysis
-- PostgreSQL-ready configuration
-- Flutter starter UI connected to backend health endpoint
-- Docker Compose for backend + PostgreSQL
-- Investment-engine module structure for financial, fundamental, valuation, liquidity, risk, and decision layers
+- **Frontend:** Flutter / Dart
+- **Backend:** Python / FastAPI
+- **Database target:** PostgreSQL
+- **Market-data source:** SAHMK Pro
+- **Real-time target:** SAHMK REST + WebSocket
 
-## What is intentionally NOT finalized in v0.1.0
-- Hero Card investment logic
-- MOS-based final decision rules
-- Institutional accumulation classification
-- Sector-specific scoring weights
-- Backtesting / walk-forward engine
+## Current status
 
-These should be added only after confirming the exact SAHMK Pro payloads and historical depth.
+Phase 1 focuses only on **verified SAHMK data transport**. The repository deliberately does **not** emit BUY/SELL decisions yet.
 
-## Quick start with Docker
-1. Copy `.env.example` to `.env`.
-2. Put your SAHMK key in `.env` locally. Never commit `.env`.
-3. Run:
+Implemented SAHMK paths:
 
-```bash
-docker compose up --build
+```text
+/quote/{symbol}/
+/company/{symbol}/
+/historical/{symbol}/
+/financials/{symbol}/
+/analytics/ratios/{symbol}/
+/market/trades/{symbol}/
 ```
 
-Backend:
-- http://localhost:8000
-- API docs: http://localhost:8000/docs
-- Health: http://localhost:8000/api/v1/health
+The historical client uses SAHMK's documented `interval/from/to/limit/offset` parameters. Pro financials request quarterly extended history, and executed trades are available for later liquidity/order-flow work.
 
-## Local backend start without Docker
+## Security
+
+Never put a real API key in GitHub.
+
+Copy:
+
+```text
+.env.example -> .env
+```
+
+Then set locally:
+
+```env
+SAHMK_API_KEY=your_real_key_here
+```
+
+`.env` is excluded by `.gitignore`.
+
+## Fastest Windows start
+
+Double-click:
+
+```text
+START_BACKEND_WINDOWS.bat
+```
+
+On first run it creates the Python virtual environment and installs requirements. If `.env` does not exist it creates one from `.env.example`; add the key, then restart.
+
+## Manual backend start
 
 ```bash
 cd backend
 python -m venv .venv
 # Windows
-.venv\\Scripts\\activate
-# macOS/Linux
-source .venv/bin/activate
+.venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-## Flutter
+Open:
 
-```bash
-cd frontend
-flutter pub get
-flutter run
+```text
+http://127.0.0.1:8000/docs
+http://127.0.0.1:8000/api/v1/health
+http://127.0.0.1:8000/api/v1/stocks/2222/diagnostics
 ```
 
-By default Flutter expects backend at `http://127.0.0.1:8000`.
-For Android emulator you may need `http://10.0.2.2:8000`.
+## Important
+
+The final investment engine will be built only after real Pro payloads are validated. No missing financial value may be silently replaced with zero or demo data.
+
+See `docs/PHASE1_SAHMK.md` and `docs/NEXT_STEPS.md`.
